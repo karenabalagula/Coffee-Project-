@@ -1,0 +1,92 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+#loading in libraries
+library(tidyverse)
+```
+
+
+```{r}
+# Reading CSV file, dropping any NA values, and removing any outlier total scores that are 0 (coffee was not rated)
+coffee_data <- read.csv("coffee.csv") %>% drop_na() %>% filter(Data.Scores.Total != 0)
+``` 
+
+
+```{r}
+# plotting sweetness vs. acidity and grouping based on country
+coffee_data %>%
+  ggplot() + geom_jitter(mapping = aes(x = Data.Scores.Acidity, y = Data.Scores.Sweetness, color = Data.Type.Species)) + labs(x = "Acidity Score", y = "Sweetness Score", colour = "Country", size = "Data Set Size") + theme_minimal()
+
+# Majority of Arabica points cluster with a sweetness score of 10 and a acidity score between 7 and 8.
+# Robusta appears to be less sweet with same average acidity
+```
+```{r}
+# Looking at how acidity and sweetness vary based on coffee species
+coffee_data %>%
+  group_by(Data.Type.Species) %>%
+  ggplot() + geom_boxplot(mapping = aes(x = Data.Scores.Acidity, y = Data.Type.Species))
+
+coffee_data %>%
+  group_by(Data.Type.Species) %>%
+  ggplot() + geom_boxplot(mapping = aes(x = Data.Scores.Sweetness, y = Data.Type.Species))
+```
+
+```{r} 
+# Checking to see if data is normally distributed using QQ plots
+coffee_data %>%
+  filter(Data.Type.Species == "Arabica")%>%
+  ggplot() + 
+    geom_qq(mapping = aes(sample = Data.Scores.Acidity)) +
+    geom_qq_line(mapping = aes(sample = Data.Scores.Acidity)) + labs (title = "QQ plot of Arabica", y = "Actual Acidity Score", x = "Theoretical Acidity Score") + theme_minimal()
+
+coffee_data %>%
+  filter(Data.Type.Species == "Robusta")%>%
+  ggplot() + 
+    geom_qq(mapping = aes(sample = Data.Scores.Sweetness)) +
+    geom_qq_line(mapping = aes(sample = Data.Scores.Sweetness)) + labs(title = "QQ plot of Robusta", y = "Actual Sweetness Score", x = "Theoretical Sweetness Score") + theme_minimal()
+
+# Both Arabica and Robusta are normally distributed
+```
+
+```{r}
+# Since the data is normally distributed, we can use a t-test to see if the mean acidity and sweetness are different between Arabica and Robusta species
+
+# Storing the mean acidity values for each species
+A_acidity <- coffee_data %>% filter(Data.Type.Species == "Arabica") %>%
+  pull(Data.Scores.Acidity)
+R_acidity <-coffee_data %>% filter(Data.Type.Species == "Robusta") %>%
+  pull(Data.Scores.Acidity)
+
+
+# Storing the mean sweetness values for each species
+A_sweetness <- coffee_data %>% filter(Data.Type.Species == "Arabica") %>%
+  pull(Data.Scores.Sweetness)
+R_sweetness <-coffee_data %>% filter(Data.Type.Species == "Robusta") %>%
+  pull(Data.Scores.Sweetness)
+```
+
+```{r}
+# running the two t tests
+
+# For acidity
+# Hnull == the difference in the mean acidity between the species is 0 
+# Halternative == the mean acidity differs between species
+
+t.test(A_acidity, R_acidity)
+
+# p value is 0.03308 so we can reject the null hypothesis which suggests that there is a statistically significant difference in acidity between the species.
+```
+
+``` {r}
+# For sweetness
+# Hnull == the difference in the mean sweetness between the species is 0 
+# Halternative == the mean sweetness differs between species
+
+t.test(A_sweetness, R_sweetness)
+
+# p value is < 2.2e-16 so we can reject the null hypothesis which suggests that there is a statistically significant difference in sweetness between the species.
+
+```
+
