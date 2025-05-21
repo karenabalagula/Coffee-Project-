@@ -36,18 +36,25 @@ coffee_data %>%
 ```{r} 
 # Checking to see if data is normally distributed using QQ plots
 coffee_data %>%
-  filter(Data.Type.Species == "Arabica")%>%
-  ggplot() + 
-    geom_qq(mapping = aes(sample = Data.Scores.Acidity)) +
-    geom_qq_line(mapping = aes(sample = Data.Scores.Acidity)) + labs (title = "QQ plot of Arabica", y = "Actual Acidity Score", x = "Theoretical Acidity Score") + theme_minimal()
-
+ filter(Data.Type.Species == "Arabica")%>%
+ ggplot() +
+  geom_qq(mapping = aes(sample = Data.Scores.Acidity)) +
+  geom_qq_line(mapping = aes(sample = Data.Scores.Acidity)) + labs (title = "QQ plot of Arabica Acidity", y = "Actual Acidity Score", x = "Theoretical Acidity Score") + theme_minimal()
 coffee_data %>%
-  filter(Data.Type.Species == "Robusta")%>%
-  ggplot() + 
-    geom_qq(mapping = aes(sample = Data.Scores.Sweetness)) +
-    geom_qq_line(mapping = aes(sample = Data.Scores.Sweetness)) + labs(title = "QQ plot of Robusta", y = "Actual Sweetness Score", x = "Theoretical Sweetness Score") + theme_minimal()
-
-# Both Arabica and Robusta are normally distributed for acidity. Arabica is not normally distributed for sweetness, while Robusta is.
+ filter(Data.Type.Species == "Robusta")%>%
+ ggplot() +
+  geom_qq(mapping = aes(sample = Data.Scores.Acidity)) +
+  geom_qq_line(mapping = aes(sample = Data.Scores.Acidity)) + labs (title = "QQ plot of Robusta Acidity", y = "Actual Acidity Score", x = "Theoretical Acidity Score") + theme_minimal()
+coffee_data %>%
+ filter(Data.Type.Species == "Arabica")%>%
+ ggplot() +
+  geom_qq(mapping = aes(sample = Data.Scores.Sweetness)) +
+  geom_qq_line(mapping = aes(sample = Data.Scores.Sweetness)) + labs(title = "QQ plot of Arabica Sweetness", y = "Actual Sweetness Score", x = "Theoretical Sweetness Score") + theme_minimal()
+coffee_data %>%
+ filter(Data.Type.Species == "Robusta")%>%
+ ggplot() +
+  geom_qq(mapping = aes(sample = Data.Scores.Sweetness)) +
+  geom_qq_line(mapping = aes(sample = Data.Scores.Sweetness)) + labs(title = "QQ plot of Robusta Sweetness", y = "Actual Sweetness Score", x = "Theoretical Sweetness Score") + theme_minimal()
 ```
 
 ```{r}
