@@ -15,9 +15,9 @@ coffee_data <- read.csv("coffee.csv") %>% drop_na() %>% filter(Data.Scores.Total
 
 
 ```{r}
-# plotting sweetness vs. acidity and grouping based on country
+# plotting sweetness vs. acidity and grouping based on species
 coffee_data %>%
-  ggplot() + geom_jitter(mapping = aes(x = Data.Scores.Acidity, y = Data.Scores.Sweetness, color = Data.Type.Species)) + labs(x = "Acidity Score", y = "Sweetness Score", colour = "Country", size = "Data Set Size") + theme_minimal()
+  ggplot() + geom_jitter(mapping = aes(x = Data.Scores.Acidity, y = Data.Scores.Sweetness, color = Data.Type.Species)) + labs(x = "Acidity Score", y = "Sweetness Score", colour = "Species", size = "Data Set Size") + theme_minimal()
 
 # Majority of Arabica points cluster with a sweetness score of 10 and a acidity score between 7 and 8.
 # Robusta appears to be less sweet with same average acidity
@@ -47,11 +47,11 @@ coffee_data %>%
     geom_qq(mapping = aes(sample = Data.Scores.Sweetness)) +
     geom_qq_line(mapping = aes(sample = Data.Scores.Sweetness)) + labs(title = "QQ plot of Robusta", y = "Actual Sweetness Score", x = "Theoretical Sweetness Score") + theme_minimal()
 
-# Both Arabica and Robusta are normally distributed
+# Both Arabica and Robusta are normally distributed for acidity. Arabica is not normally distributed for sweetness, while Robusta is.
 ```
 
 ```{r}
-# Since the data is normally distributed, we can use a t-test to see if the mean acidity and sweetness are different between Arabica and Robusta species
+# We can use a t-test for acidity since both Arabica and Robusta are normally distributed. For sweetness, since the species were not normally distributed, we used a Wilcoxon Rank Sum Test.
 
 # Storing the mean acidity values for each species
 A_acidity <- coffee_data %>% filter(Data.Type.Species == "Arabica") %>%
@@ -84,7 +84,7 @@ t.test(A_acidity, R_acidity)
 # Hnull == the difference in the mean sweetness between the species is 0 
 # Halternative == the mean sweetness differs between species
 
-t.test(A_sweetness, R_sweetness)
+wilcox.test(A_sweetness, R_sweetness)
 
 # p value is < 2.2e-16 so we can reject the null hypothesis which suggests that there is a statistically significant difference in sweetness between the species.
 
